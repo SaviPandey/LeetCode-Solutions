@@ -1,18 +1,22 @@
 class Solution {
     public int longestPalindrome(String s) {
-        if(s  == null || s.length() == 0)  return 0;
-        HashSet<Character> hs = new HashSet<Character>();
+        int[] chs = new int[58]; // Array to store frequency of each character
+        for (char c : s.toCharArray()) {
+            chs[c - 'A']++;
+        }
 
-        int count = 0;
-        for(char c : s.toCharArray()) {
-            if(hs.contains(c)) {
-                hs.remove(c);
-                count++;
+        int res = 0;
+        boolean hasOdd = false;
+
+        for (int count : chs) {
+            if (count % 2 == 0) {
+                res += count; // Add even counts directly
             } else {
-                hs.add(c);
+                res += count - 1; // Add the largest even part of the odd count
+                hasOdd = true; // Mark that there is an odd count
             }
         }
-        
-        return hs.isEmpty() ? count * 2 : count * 2 + 1;
+
+        return hasOdd ? res + 1 : res; // If there's an odd count, add 1 for the center character
     }
 }
