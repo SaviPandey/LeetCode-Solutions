@@ -1,42 +1,46 @@
+import java.util.Stack;
+
 class Solution {
     public int maximumGain(String s, int x, int y) {
-        int res = 0;
-        String top, bot;
-        int top_score, bot_score;
+        int result = 0;
+        String firstPattern, secondPattern;
+        int firstScore, secondScore;
 
-        if(y > x) {
-            top = "ba";
-            top_score = y;
-            bot = "ab";
-            bot_score = x;
+        // Decide which pattern to prioritize
+        if (y > x) {
+            firstPattern = "ba";
+            firstScore = y;
+            secondPattern = "ab";
+            secondScore = x;
         } else {
-            top = "ab";
-            top_score = x;
-            bot = "ba";
-            bot_score = y;
+            firstPattern = "ab";
+            firstScore = x;
+            secondPattern = "ba";
+            secondScore = y;
         }
 
-        //Removing Top substring
-        StringBuilder stack = new StringBuilder();
-        for(char ch : s.toCharArray()) {
-            if(ch == top.charAt(1) && stack.length() > 0 && stack.charAt(stack.length() - 1) == top.charAt(0)) {
-                res += top_score;
-                stack.setLength(stack.length() - 1);
+        // Stack for removing occurrences of the first pattern
+        Stack<Character> stack = new Stack<>();
+        for (char ch : s.toCharArray()) {
+            if (ch == firstPattern.charAt(1) && !stack.isEmpty() && stack.peek() == firstPattern.charAt(0)) {
+                result += firstScore;
+                stack.pop();
             } else {
-                stack.append(ch);
+                stack.push(ch);
             }
         }
 
-        //Removing Bot substring
-        StringBuilder newStack = new StringBuilder();
-        for(char ch : stack.toString().toCharArray()) {
-            if(ch == bot.charAt(1) && newStack.length() > 0 && newStack.charAt(newStack.length() - 1) == bot.charAt(0)) {
-                res += bot_score;
-                newStack.setLength(newStack.length() - 1);
+        // Stack for removing occurrences of the second pattern
+        Stack<Character> newStack = new Stack<>();
+        for (char ch : stack) {
+            if (ch == secondPattern.charAt(1) && !newStack.isEmpty() && newStack.peek() == secondPattern.charAt(0)) {
+                result += secondScore;
+                newStack.pop();
             } else {
-                newStack.append(ch);
+                newStack.push(ch);
             }
         }
-       return res; 
+
+        return result;
     }
 }
