@@ -1,14 +1,20 @@
 class Solution {
         public int[][] restoreMatrix(int[] row, int[] col) {
         int m = row.length, n = col.length;
-        int[][] A = new int[m][n];
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0 ; j < n; ++j) {
-                A[i][j] = Math.min(row[i], col[j]);
-                row[i] -= A[i][j];
-                col[j] -= A[i][j];
+        int[][] validMatrix = new int[m][n];
+            
+        int i = 0, j = 0;
+        while(i < m && j < n) {
+            validMatrix[i][j] = Math.min(row[i], col[j]);
+            row[i] -= validMatrix[i][j];
+            col[j] -= validMatrix[i][j];
+            
+            if(row[i] == 0) {
+                i++;
+            } else {
+                j++;
             }
         }
-        return A;
+        return validMatrix;
     }
 }
