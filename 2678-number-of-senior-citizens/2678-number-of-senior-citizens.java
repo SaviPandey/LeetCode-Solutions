@@ -3,7 +3,7 @@ class Solution {
         int age = 0;
         int count = 0;
         for(String detail : details){
-            if(Integer.parseInt(detail.substring(11, 13)) > 60) 
+            if( ((detail.charAt(11) - '0') * 10 + (detail.charAt(12) - '0')) > 60 ) 
                 count++;
         }
         return count;
