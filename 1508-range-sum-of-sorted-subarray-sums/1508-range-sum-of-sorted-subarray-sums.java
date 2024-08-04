@@ -1,56 +1,34 @@
 import java.util.*;
 
 class Solution {
-    private static final int MODULUS = 1000000007;
-    private long maxSubarraySum = 0;
-    private long minSubarraySum = 0;
+    int mod = (int)1e9 + 7;
 
-    private Map.Entry<Integer, Long> countAndSumSubarrays(int[] array, long threshold) {
-        int count = 0;
-        long totalSum = 0;
-        long currentWindowSum = 0;
-        long runningSum = 0;
-        int size = array.length;
-
-        for (int start = 0, end = 0; end < size; ++end) {
-            runningSum += (long) array[end] * (end - start + 1);
-            currentWindowSum += array[end]; 
-            while (currentWindowSum > threshold) {
-                runningSum -= currentWindowSum;
-                currentWindowSum -= array[start++];
-            }
-            count += end - start + 1;
-            totalSum += runningSum;
-        }
-        return new AbstractMap.SimpleEntry<>(count, totalSum);
-    }
-
-    private long calculateSumOfFirstKSubarrays(int[] array, int k) {
-        long low = minSubarraySum, high = maxSubarraySum;
-        while (low < high) {
-            long mid = low + (high - low) / 2;
-            if (countAndSumSubarrays(array, mid).getKey() < k) {
-                low = mid + 1;
-            } else {
-                high = mid;
-            }
-        }
-        Map.Entry<Integer, Long> result = countAndSumSubarrays(array, low);
-        long sum = result.getValue();
-        int count = result.getKey();
-        return sum - low * (count - k);
-    }
-
+    //[elements, index]
     public int rangeSum(int[] nums, int n, int left, int right) {
-        minSubarraySum = nums[0];
-        for (int num : nums) {
-            maxSubarraySum += num;
-            minSubarraySum = Math.min(minSubarraySum, num);
+        PriorityQueue<int []> pq = new PriorityQueue<>(new Comparator<int []>(){
+            public int compare(int a[], int b[]) {
+                return a[0] - b[0];
+            }
+        });
+
+        for(int i=0; i<n ; i++) {
+            pq.offer(new int[]{nums[i], i});
         }
 
-        long result = (calculateSumOfFirstKSubarrays(nums, right) % MODULUS - 
-                       calculateSumOfFirstKSubarrays(nums, left - 1) % MODULUS + 
-                       MODULUS) % MODULUS;
-        return (int) result;
+        int sum = 0;
+        for(int index=0; index < right ; index++) {
+            int curr[] = pq.poll();
+
+            if(index >= left-1) {
+                sum = (sum + curr[0]) % mod;
+            }
+            //[3, 2]  => then 2+1 < n ? true then add in pq
+            if(curr[1] + 1 < n) {
+                curr[1]++;
+                curr[0] = curr[0] + nums[curr[1]];
+                pq.offer(curr);
+            }
+        }
+        return sum;
     }
 }
