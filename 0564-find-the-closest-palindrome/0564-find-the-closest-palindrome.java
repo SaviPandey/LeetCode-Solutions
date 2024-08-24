@@ -1,31 +1,43 @@
 class Solution {
     public String nearestPalindromic(String n) {
-        long N = Long.parseLong(n), S = previous(String.valueOf(N-1).toCharArray()), L = next(String.valueOf(N+1).toCharArray());
-        return String.valueOf(L - N < N - S ? L : S);
-    }
-    private long previous(char[] s) {
-        for(int i = 0, n = s.length; i < (n >> 1); i++) {
-            while(s[i] != s[n - 1 - i]) {
-                decrement(s, n - 1 - i);
-                if(s[0] == '0') return Long.parseLong(new String(s));
+        long number = Long.parseLong(n);
+        if(number <= 10) return String.valueOf(number-1);
+        if(number == 11) return "9";
+
+
+        int length = n.length();
+        long leftHalf = Long.parseLong(n.substring(0, (length + 1) / 2));
+
+        long[] palindromeCandidates = new long[5];
+
+        palindromeCandidates[0] = generatePalindromeFromLeft(leftHalf - 1, length % 2 == 0);
+        palindromeCandidates[1] = generatePalindromeFromLeft(leftHalf, length % 2 == 0);
+        palindromeCandidates[2] = generatePalindromeFromLeft(leftHalf + 1, length % 2 == 0);
+        palindromeCandidates[3] = (long)Math.pow(10, length - 1) - 1;
+        palindromeCandidates[4] = (long)Math.pow(10, length) + 1;
+
+        long nearestPalindrome = 0;
+        long minDifference = Long.MAX_VALUE;
+
+        for (long candidate : palindromeCandidates) {
+            if (candidate == number) continue;
+            long difference = Math.abs(candidate - number);
+            if (difference < minDifference || (difference == minDifference && candidate < nearestPalindrome)) {
+                minDifference = difference;
+                nearestPalindrome = candidate;
             }
         }
-        return Long.parseLong(new String(s));
+        return String.valueOf(nearestPalindrome);
     }
-    private void decrement(char[] s, int i) {
-        while(s[i] == '0') s[i--] = '9';
-        s[i]--;
-    }
-    private long next(char[] s) {
-        for(int i = 0, n = s.length; i < (n >> 1); i++) {
-            while(s[i] != s[n - 1 - i]) {
-                increment(s, n - 1 - i);
-            }
+
+    private long generatePalindromeFromLeft(long leftHalf, boolean isEvenLength) {
+        long palindrome = leftHalf;
+        if (!isEvenLength) leftHalf /= 10;
+        while (leftHalf > 0) {
+            palindrome = palindrome * 10 + leftHalf % 10;
+            leftHalf /= 10;
         }
-        return Long.parseLong(new String(s));
+        return palindrome;
     }
-    private void increment(char[] s, int i) {
-        while(s[i] == '9') s[i--] = '0';
-        s[i]++;
-    }
+
 }
