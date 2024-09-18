@@ -1,31 +1,25 @@
-public class Solution {
+class Solution {
     public String largestNumber(int[] nums) {
-        // Convert integers to strings
-        String[] numStrings = new String[nums.length];
-        for (int i = 0; i < nums.length; i++) {
-            numStrings[i] = String.valueOf(nums[i]);
+       if (nums == null || nums.length == 0) return "";
+
+       String[] str = new String[nums.length];
+       for(int i=0; i<nums.length; i++){
+        str[i] = nums[i]+"";
+       } 
+       Arrays.sort(str, new Comparator<String>() {
+        @Override
+        public int compare(String i, String j) {
+            String s1 = i + j;
+            String s2 = j + i;
+            return s1.compareTo(s2);
         }
+       });
 
-        // Sort strings using a custom comparator
-        Arrays.sort(numStrings, new Comparator<String>() {
-            public int compare(String s1, String s2) {
-                String order1 = s1 + s2;
-                String order2 = s2 + s1;
-                return order2.compareTo(order1); // Compare in descending order
-            }
-        });
-
-        // Concatenate sorted strings
-        StringBuilder sb = new StringBuilder();
-        for (String numString : numStrings) {
-            sb.append(numString);
-        }
-
-        // Remove leading zeros
-        while (sb.charAt(0) == '0' && sb.length() > 1) {
-            sb.deleteCharAt(0);
-        }
-
-        return sb.toString();
+       if(str[str.length - 1].charAt(0) == '0') return "0";  //Not Printing 00, 000..
+       String res = new String();
+       for(int i = 0; i < str.length; i++){
+        res = str[i] + res;
+       }
+       return res;
     }
-} 
+}
